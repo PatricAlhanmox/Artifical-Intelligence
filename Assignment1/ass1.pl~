@@ -1,0 +1,28 @@
+%Q1
+even([],[]).
+even([Head|Tail], List):-
+    not(0 is Head mod 2),
+    !,
+    even(Tail, List).
+even([Head|Tail],[Head|Next]):-
+    even(Tail,Next).
+
+sums([], 0).
+sums([Head|Rest], Sum):-
+    sums(Rest, Total),
+    Sum is Total + Head*Head.
+
+sumsq_even(A, Sum):-
+    even(A, List),
+    sums(List, Sum).
+    
+ 
+%Q2
+offspring(Y,X):-
+    parent(X,Y).
+offspring(Y,X):-
+    parent(Z,Y),
+    offspring(Y,X).
+    
+same_name(A,B):-
+    offs

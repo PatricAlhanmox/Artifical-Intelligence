@@ -1,0 +1,69 @@
+%Q21a
+         |  Ucsdijkstra |  ideepsearch |  astar |  idastar |
+=========|==============|==============|========|==========|
+'start10'|  2565        |  2407        |  33    |  29      |
+=========|==============|==============|========|==========|
+'start12'|  Mem         |  13812       |  26    |  21      |
+=========|==============|==============|========|==========|
+'start20'|  Mem         |  5297410     |  915   |  952     |
+=========|==============|==============|========|==========|
+'start30'|  Mem         |  Time        |  Mem   |  17297   |
+=========|==============|==============|========|==========|
+'start40'|  Mem         |  Time        |  Mem   |  112571  |
+=========|==============|==============|========|==========|
+
+%Q21b
+* Ucsdijkstra: From the data given on the above we could observe that Ucsdijkstra has 4 coloumn that run out of Memory, it is above the highest value among other searches. This search will firstly expand the initial state first and then expand the state that in the most similar state with goal state then it keeps finding the cheapest goal provided past based on each steps of states meanwhile it monotonically increasing along each path, at the end cheapest will be the optimal solution. Time complexity is O(B^[C/e]), C is cost of optimal solution and assume  every tansaction costs at least e. Space complexity is O(B^d) since all steps are equal. As the startNum increases it becoming bigger. So basiclly it will give an optimal solution to puzzle15 but it will waste too much memory since it has to viste all the node. Ucsdijkstra is efficient only for the low startNum it will provide optimal solution in a satisfied. 
+* Ideepsearch: From data given on the above we could observe that timeout occurs when the startNum is greater than 20, it is the only column where timeout occurs. The algorithum expands all possible states like depth first search but impose a cutoff on the maximum depth of path then it tries all possible steps bounds in turn. This algorithum is complete since it covers all the state of 15 puzzle. The time complexity is O(B^d), this is why timeout happens when the startNum is greater than 20, for start30 time complexity will be O(17297^30) which is in Expoential. Since all the steps are identical, then the optimal solution is exist. The space complexity is O(bd), it is linear so not very big. Ideepsearch is efficient only for the case where startNum less than 20. It would be more faster than Ucsdijkstra, also the Ideepsearch algorithums memory usage will be less since linear is less than expoential curve, which is more efficient.
+*Astar: From data given on the above we could oberve that Mem occurs when the startNum increases over 20, but there are no timeout occurs. The algorithum use both cost of path generated and goal to order nodes on the frontier. f(n)=g(n)+h(n), g(n)=cost of path from start state to current state; h(n)=estimate steps from current state to goal state. Even after a goal state has been generated, A* will keep searching so long as there is a possibility of finding a shorter solution. The algorithum have optimal solution, the h(n) can be regared as an indicator that how close between current state and final state, so when we minimising the sum between heuristic and actual distance the optimal should be found. The time complexity is exponential in relative error in h*length of solution, so that it is linear the timeout will not happened. Space compolexity is keeps all the state in memory, so it is in exponential to save all the state which will cause out of memory when the startNum increase over 20. It is complete since it visted all the state to find an optimal solution. This algorithum is efficient when the startNum is low. When the startNum is less than or equal to 20, the time complexity is smaller than ideepsearch and Ucsdijkstra. However the space complexity will be higher.
+*Idastar: From data given on the above we could oberve that the search processed all the task successfully. The algorithum combined A* search and iterative deepening, it performs a depth first searches but cuts off each search when the f exceeds current threshold, initially f(start). The threshold is steadily increased with each successive search. The time complexity is less than A* search and space compelxity very low. Space cost of this method is significantly low which is the least usage of memory among all the given algorithum, this is why there are no out of memory no matter how big the startNum is. Idastar is asymptotically as efficient as A* for domains where the number of states grows exponentially.
+
+%Q22a
+       |   start50  |   start60  |   start64  |
+=======|============|============|============|
+Greedy | 164|5447   | 166|1617   | 184|2174   |
+=======|============|============|============|
+
+%Q22b
+replaced F1 is G1 + H1 into F1 is 1.2*G1 + 0.8*H1
+
+The section that been changed:
+    depthlim(Path, Node, G, F_limit, Sol, G2)  :-
+        nb_getval(counter, N),
+        N1 is N + 1,
+        nb_setval(counter, N1),
+        % write(Node),nl,   % print nodes as they are expanded
+        s(Node, Node1, C),
+        not(member(Node1, Path)),      % Prevent a cycle
+        G1 is G + C,
+        h(Node1, H1),
+        F1 is G1 + H1,
+        F1 =< F_limit,
+        depthlim([Node|Path], Node1, G1, F_limit, Sol, G2).
+Final query looks like:
+    depthlim(Path, Node, G, F_limit, Sol, G2)  :-
+        nb_getval(counter, N),
+        N1 is N + 1,
+        nb_setval(counter, N1),
+        % write(Node),nl,   % print nodes as they are expanded
+        s(Node, Node1, C),
+        not(member(Node1, Path)),      % Prevent a cycle
+        G1 is G + C,
+        h(Node1, H1),
+        F1 is 1.2*G1 + 0.8*H1,
+        F1 =< F_limit,
+        depthlim([Node|Path], Node1, G1, F_limit, Sol, G2).
+
+%Q22C 
+       |   start50  |   start60  |   start64  |
+=======|============|============|============|
+1.2    |  52|191438 |  62|230861 |  66|431033 |
+=======|============|============|============|
+1.4    |  66|116342 |  82|4432   |  94|190278 |
+=======|============|============|============|
+1.6    | 100|33504  | 148|55626  | 162|235848 |
+=======|============|============|============|
+
+%Q22D
+The trade function is f(n) = (2 - w) * g(n) + w * h(n). From the data that we collected the greedy search goes the longest path to the goal node. But expanded the least node, greedy search is an informed search. For every step on the next move it will pick the state that are closer to the final state. It only depends on the heuristic distance which is h(n), so when w=2, f(n) = 2*h(n). Which is in scale with f(n), however this algorithm very likely to ends up in a loop which is why in high number of startNum it probably expand very less state but walked in a long path they may walk in an infinte loop that does not find solution and result in a Time error. But in this question we found solution for each startNum.
+From W=1.2,1.4,1.6 this W is increasing as the W increase the length of path increases as while. But the time it takes for the same startNum is less and less.  The IDA* search can be repersented by the function f(n) = G(n)+H(n). It balanced the speed and quality for solving the goal. when w=1, both factors are equaliy important. So it has the optimal solution and a relativly fast speed, although it is still the slowest compared to 1.2,1.4,1.6 and greedy search. The heuristic distance from current state to goal state is actually less than the distance we spend. While increase the amount of W and expanding the state, we are making the actual distance insignificantly. Because of the heristic function the true value will be not in the order which result the G from solution will be greater than the startNum. The increasing of W reault in a the smaller of 2-W, it reduced the weight of actual distance in the heuristic function which reduced accuracy as the W bigger the less significant the (2-W)*G(n) will be, so the accuracy drops. As we can seen from the data table W=1.2 to W=1.6 program runs faster but the G increases which is more inaccurate. But the speed of programs increases as the W is greater, it doesn't necessaryly find the optimal solution, then it becomes faster to operate the program.
